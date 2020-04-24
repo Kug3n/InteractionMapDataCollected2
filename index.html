@@ -1,0 +1,279 @@
+<!-- http://code.minnpost.com/simple-map-d3/-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="bower_components/simple/stylesheets/screen.css">
+    <!-- <link rel="stylesheet" type="text/css" href="bower_components/simple/stylesheets/pygment_trac.css" /> -->
+
+    <link rel="stylesheet" href="/my-app/worldPreview/lib/css/simple-map-d3.css">
+    <script type="text/javascript" src="/my-app/worldPreview/lib/js/paper.js"></script>
+
+
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+  </head>
+
+  <body>
+
+                    <paperDiv class="fullscreen" >
+                      <!-- <nav>
+                        <h1><a href="/">Paper.js</a></h1>
+                  <ul>
+                    <li><a href="/about/">About</a>
+                    </li>
+                    <li><a href="/features/">Features</a>
+                    </li>
+                    <li class="spacer"></li>
+                    <li><a href="/examples/">Examples</a>
+                  <ul>
+                    <li><a href="/examples/boolean-operations/">Boolean Operations</a></li>
+                    <li><a href="/examples/candy-crash/">Candy Crash</a></li>
+                    <li><a href="/examples/satie-liked-to-draw/">Satie Liked To Draw</a></li>
+                    <li><a href="/examples/chain/">Chain</a></li>
+                    <li><a href="/examples/tadpoles/">Tadpoles</a></li>
+                    <li><a href="/examples/nyan-rainbow/">Nyan Rainbow</a></li>
+                    <li><a href="/examples/rounded-rectangles/">Rounded Rectangles</a></li>
+                    <li class="active"><a href="/examples/radial-rainbows/">Radial Rainbows</a></li>
+                    <li><a href="/examples/meta-balls/">Meta Balls</a></li>
+                    <li><a href="/examples/voronoi/">Voronoi</a></li>
+                    <li><a href="/examples/future-splash/">Future Splash</a></li>
+                    <li><a href="/examples/smoothing/">Smoothing</a></li>
+                    <li><a href="/examples/spiral-raster/">Spiral Raster</a></li>
+                    <li><a href="/examples/division-raster/">Division Raster</a></li>
+                    <li><a href="/examples/q-bertify/">Q-bertify</a></li>
+                    <li><a href="/examples/path-intersections/">Path Intersections</a></li>
+                    <li><a href="/examples/path-simplification/">Path Simplification</a></li>
+                    <li><a href="/examples/hit-testing/">Hit Testing</a></li>
+                    <li><a href="/examples/bouncing-balls/">Bouncing Balls</a></li>
+                  </ul>
+                    </li>
+                    <li><a href="/showcase/">Showcase</a>
+                    </li>
+                    <li class="spacer"></li>
+                    <li><a href="/tutorials/">Tutorials</a>
+                    </li>
+                    <li><a href="/reference/">Reference</a>
+                    </li>
+                    <li><a href="http://sketch.paperjs.org/">Sketch</a>
+                    </li>
+                    <li class="spacer"></li>
+                    <li><a href="/download/">Download</a>
+                    </li>
+                    <li><a href="/donation/">Donation</a>
+                    </li>
+                    <li><a href="/license/">License</a>
+                    </li>
+                    <li class="spacer"></li>
+                    <li><a href="http://groups.google.com/group/paperjs" target="_blank">Mailing List</a>
+                    </li>
+                    <li><a href="http://twitter.com/PaperJS" target="_blank">Follow on Twitter</a>
+                    </li>
+                    <li><a href="http://github.com/paperjs/paper.js" target="_blank">Watch on Github</a>
+                    </li>
+                  </ul>
+                      </nav> -->
+                  <article><div class="paperscript">
+                  <!-- <div class="buttons">
+                  <div class="button run">Source</div>
+                  <div class="explain">
+
+                  </div>
+                  </div> -->
+                  <script type="text/paperscript" canvas="canvas-1">
+                  var point = view.center;
+
+                  var colors = [];
+                  var cycles = 4;
+                  for (var i = 0, l = 60; i < l; i++) {
+                  	var brightness = 1 - (i / l) * 1.5;
+                  	var hue = i / l * cycles * 360;
+                  	var color = {
+                  		hue: hue,
+                  		saturation: 1,
+                  		brightness: brightness
+                  	};
+                  	colors.push(color);
+                  }
+
+                  var radius = Math.max(view.size.width, view.size.height) * 0.75;
+
+                  var path = new Path.Rectangle({
+                  	rectangle: view.bounds,
+                  	fillColor: {
+                  		origin: point,
+                  		destination: point + [radius, 0],
+                  		gradient: {
+                  			stops: colors,
+                  			radial: true
+                  		}
+                  	}
+                  });
+
+                  var color = path.fillColor;
+                  var gradient = color.gradient;
+                  var mouseDown = false;
+                  var mousePoint = view.center;
+
+                  function onMouseDown(event) {
+                  	mouseDown = true;
+                  	mousePoint = event.point;
+                  }
+
+                  function onMouseDrag(event) {
+                  	mousePoint = event.point;
+                  }
+
+                  function onMouseUp(event) {
+                  	vector.length = 10;
+                  	mouseDown = false;
+                  }
+
+                  var grow = false;
+                  var vector = new Point(150, 0);
+
+                  function onFrame() {
+                  	for (var i = 0, l = gradient.stops.length; i < l; i++)
+                  		gradient.stops[i].color.hue -= 20;
+                  	if (grow && vector.length > 300) {
+                  		grow = false;
+                  	} else if (!grow && vector.length < 75) {
+                  		grow = true;
+                  	}
+                  	if (mouseDown) {
+                  		point = point + (mousePoint - point) / 10;
+                  	} else {
+                  		vector.length += (grow ? 1 : -1);
+                  		vector.angle += 5;
+                  	}
+                  	color.highlight = mouseDown ? point : point + vector;
+                  }
+
+                  function onResize(event) {
+                  	point = view.center;
+                  	path.bounds = view.bounds;
+                  	var color = path.fillColor;
+                  	color.origin = point;
+                  	var radius = Math.max(view.size.width, view.size.height) * 0.75;
+                  	color.destination = point + [radius, 0];
+                  }
+                  </script>
+                  <div class="canvas">
+                  <canvas resize="true" hidpi="off" id="canvas-1" style="background:black"></canvas>
+                  </div>
+                  </div>
+                  </article>
+                    </paperDiv>
+
+
+
+
+    <div id="mydiv" style="width: 1800; height: 90vh; margin: 0 auto;">
+
+
+    </div>
+
+    <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="bower_components/d3/d3.min.js"></script>
+    <script type="text/javascript" src="bower_components/topojson/topojson.js"></script>
+    <script type="text/javascript" src="lib/js/simple-map-d3.js"></script>
+
+    <script type="text/javascript">
+
+      (function($) {
+        $(document).ready(function() {
+
+          var europeenergy = SimpleMapD3({
+            container: '#mydiv',
+            datasource: 'data/mergedData.geojson',
+            colorSet: 'myBlue', // colorset
+            colorOn: true, // false - black
+            legendOn: false, // true
+            colorProperty: 'E1: Economy',
+            colorReverse: false, // true
+            projection: 'mercator', // 'equirectangular' / 'azimuthalEqualArea' etc. https://github.com/d3/d3/blob/master/API.md#geographies-d3-geo
+            rotation: [0, 0, 0],
+            canvasDragOn: true, //true
+            tooltipContent: function(d) {
+              var p = d.properties;
+              return '<h1>' + p._cou_text_en + '</h1>' +
+            '<h5>' + 'Region: ' + p._Region + '</h5>'
+
+            +'<h5>' + 'Neighbours: '
+            + p._Neighbours + '</h5>'
+
+            +'<h5>' + '2019 UNCHR Asylum seekers accepted:: '
+            + p._2019_UNHCR_Asylum_seekers_accepted_by_country + '</h5>'
+
+            +'<h5>' + 'Fragile State Index FSI Rank '
+            + p._FSI_2019_Rank + '</h5>'
+
+            +'<h5>' + '2017 GDP/Capita World Bank USD: '
+            + p._2017_World_Bank_GDP_per_capita_current_US$ + '</h5>'
+
+            +'<h5>' + '2018 GDP/Capita World Bank USD: '
+            + p._2018_World_Bank_GDP_per_capita_current_US$ + '</h5>'
+
+            +'<h5>' + 'Subregion: '
+            + p._Subregion + '</h5>'
+
+            +'<h5>' + '2020 UN Total Population : '
+            + p._2020_UN_Total_population_both_sexes_combined_thousands+ '000' + '</h5>'
+
+            +'<h5>' + 'Number of unique land borders: '
+            + p._No_of_unique_land_borders + '</h5>'
+
+            +'<h5>' + 'Number of unique land neighbours: '
+            + p._No_of_unique_land_neighbours + '</h5>'
+
+            +'<h5>' + 'FSI Security Apparatus Index: '
+            + p._C1_Security_Apparatus + '</h5>'
+
+            +'<h5>' + 'FSI Factionalized elites Index: '
+            + p._C2_Factionalized_Elites + '</h5>'
+
+            +'<h5>' + 'FSI Group grievance Index: '
+            + p._C3_Group_Grievance + '</h5>'
+
+            +'<h5>' + 'FSI Economy Index: '
+            + p._E1_Economy + '</h5>'
+
+            +'<h5>' + 'FSI Economic enequality Index: '
+            + p._E2_Economic_Inequality + '</h5>'
+
+            +'<h5>' + 'FSI Human flight and brain drain Index: '
+            + p._E3_Human_Flight_and_Brain_Drain + '</h5>'
+
+            +'<h5>' + 'FSI State legitimacy Index: '
+            + p._P1_State_Legitimacy + '</h5>'
+
+            +'<h5>' + 'FSI Public Services Index: '
+            + p._P2_Public_Services + '</h5>'
+
+            +'<h5>' + 'FSI Human rights Index: '
+            + p._P3_Human_Rights + '</h5>'
+
+            +'<h5>' + 'FSI Demographic pressures Index: '
+            + p._S1_Demographic_Pressures + '</h5>'
+
+            +'<h5>' + 'FSI  Index: '
+            + p._S2_Refugees_and_IDPs + '</h5>'
+
+            +'<h5>' + 'FSI  Index: '
+            + p._X1_External_Intervention + '</h5>'
+
+
+            }
+          });
+        })
+      })(jQuery);
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+/**
+ * Main CSS for Simple Map D3.
+ */
+.simple-map-d3-tooltip-container {
+  position: relative;
+}
+
+.simple-map-d3-tooltip {
+  position: absolute;
+  font-family: arial, sans-serif;
+  display: none;
+  top: 20px;
+  right: 20px;
+  padding: .5em;
+  font-size: 12px;
+  font-weight: bold;
+  width: 200px;
+  height: auto;
+}
+
+.smd-canvas.smd-draggable,
+.smd-draggable {
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.smd-canvas.smd-draggable.dragging,
+.smd-draggable.dragging {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.smd-background {
+  fill: transparent;
+  stroke: 0;
+}
+
+.smd-path {
+  stroke: #555;
+  stroke-width: 1px;
+  stroke-opacity: .85;
+}
+
+.smd-path:hover {
+  stroke-opacity: 1;
+  stroke-width: 1px;
+  stroke: black;
+}
+
+.smd-canvas.smd-tooltipped .smd-path:hover {
+  cursor: pointer;
+}
+
+.smd-legend-container {
+  stroke-width: 0;
+  fill: white;
+  fill-opacity: 0.9;
+  stroke: #898989;
+}
+
+.smd-legend-label {
+  font-weight: bold;
+  font-family: arial, sans-serif;
+  font-size: 18px;
+}
+
+.smd-graticule {
+  fill: none;
+  stroke: #222222;
+  stroke-width: .5px;
+  stroke-opacity: .75;
+}
+
+.smd-globe {
+  fill: none;
+  stroke: #222222;
+  stroke-width: 3px;
+}
